@@ -1,9 +1,5 @@
 package com.example.android.sunshine.app;
 
-/**
- * Created by Mike Brajkovich on 4/2/2016.
- */
-
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -97,35 +93,49 @@ public class ForecastFragment extends Fragment {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
             FetchWeatherTask fwt = new FetchWeatherTask();
-            fwt.execute();
+            fwt.execute("62901");
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    public class FetchWeatherTask extends AsyncTask{
+    public class FetchWeatherTask extends AsyncTask<String, Void, Void>{
 
-        public FetchWeatherTask(String butt){
-
-        }
+        private String _baseUrl = "api.openweathermap.org";
+        private String _scheme = "http";
 
         private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
         @Override
-        protected Object doInBackground(Object[] objects) {
+        protected Void doInBackground(String... params) {
+
+            if(params.length == 0){
+                return null;
+            }
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
 
             // Will contain the raw JSON response as a string.
-            String forecastJsonStr = null;
+            String forecastJsonStr;
 
             try {
                 Uri.Builder uriBuilder = new Uri.Builder();
-                uriBuilder.scheme("http");
-                ("http://api.openweathermap.org/data/2.5/forecast/","");
-                URL url = new URL("daily?q=62901&mode=json&units=metric&cnt=7&APPID=");
+                //these are all final so make them finaler
+                uriBuilder.scheme(_scheme);
+                uriBuilder.authority(_baseUrl);
+                uriBuilder.appendPath("data");
+                uriBuilder.appendPath("2.5");
+                uriBuilder.appendPath("forecast");
+                uriBuilder.appendPath("daily");
+                uriBuilder.appendQueryParameter("q", params[0]); //make this not a set values
+                uriBuilder.appendQueryParameter("mode", "json");
+                uriBuilder.appendQueryParameter("units", "metric");
+                uriBuilder.appendQueryParameter("cnt", "7");
+                uriBuilder.appendQueryParameter("APPID", "");
+
+                URL url = new URL(uriBuilder.build().toString());
 
                 // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -172,8 +182,7 @@ public class ForecastFragment extends Fragment {
                     }
                 }
             }
-
-            return forecastJsonStr;
+            return null; //Void is not void
         }
     }
 }
