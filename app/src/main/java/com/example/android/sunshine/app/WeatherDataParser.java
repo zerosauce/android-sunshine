@@ -11,6 +11,6 @@ public class WeatherDataParser {
         JSONArray weatherJsonArray = weatherJsonObject.getJSONArray("list");
         JSONObject weatherDayJson = weatherJsonArray.getJSONObject(dayIndex);
         JSONObject weatherDayTempJson = weatherDayJson.getJSONObject("temp");
-        return Double.parseDouble(weatherDayTempJson.get("max").toString());
+        return weatherDayTempJson.getDouble("max");
     }
 }
