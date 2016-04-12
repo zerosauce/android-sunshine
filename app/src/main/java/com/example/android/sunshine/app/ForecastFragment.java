@@ -1,5 +1,6 @@
 package com.example.android.sunshine.app;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,8 +13,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -76,7 +79,18 @@ public class ForecastFragment extends Fragment {
         // Get a reference to the ListView, and attach this adapter to it.
         ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
         listView.setAdapter(mForecastAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
+                Context context = getActivity();
+                CharSequence text = mForecastAdapter.getItem(i);
+                int duration = Toast.LENGTH_SHORT;
+
+                Toast toast = Toast.makeText(context, text, duration);
+                toast.show();
+            }
+        });
         return rootView;
     }
 
@@ -112,6 +126,16 @@ public class ForecastFragment extends Fragment {
         private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
         @Override
+        protected void onPostExecute(String[] strings) {
+            if(strings != null) {
+                mForecastAdapter.clear();
+                for (String string : strings) {
+                    mForecastAdapter.add(string);
+                }
+            }
+        }
+
+        @Override
         protected String[] doInBackground(String... params) {
 
             if (params.length == 0) {
@@ -138,7 +162,7 @@ public class ForecastFragment extends Fragment {
                 uriBuilder.appendQueryParameter("mode", "json");
                 uriBuilder.appendQueryParameter("units", "metric");
                 uriBuilder.appendQueryParameter("cnt", "7");
-                uriBuilder.appendQueryParameter("APPID", "");
+                uriBuilder.appendQueryParameter("APPID", "75397ee2ad06ec8f14663bd0ab4d3018");
 
                 URL url = new URL(uriBuilder.build().toString());
 
@@ -169,8 +193,6 @@ public class ForecastFragment extends Fragment {
                     return empty;
                 }
                 forecastJsonStr = buffer.toString();
-
-                Log.v(LOG_TAG, "Forecast data: " + forecastJsonStr);
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
                 // If the code didn't successfully get the weather data, there's no point in attemping
@@ -290,9 +312,6 @@ public class ForecastFragment extends Fragment {
                 resultStrs[i] = day + " - " + description + " - " + highAndLow;
             }
 
-            for (String s : resultStrs) {
-                Log.v(LOG_TAG, "Forecast entry: " + s);
-            }
             return resultStrs;
         }
     }
