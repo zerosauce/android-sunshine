@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -82,7 +83,10 @@ public class DetailActivity extends ActionBarActivity {
             if(intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
                 String extraText = intent.getStringExtra(Intent.EXTRA_TEXT);
                 TextView tv = (TextView) getActivity().findViewById(R.id.detail_text);
-                tv.append(extraText);
+                Log.v("TEST", extraText);
+                if(tv != null) {
+                    tv.append(extraText);
+                }
             }
             return rootView;
         }

@@ -22,6 +22,8 @@ public class SettingsActivity extends PreferenceActivity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_settings);
+
         // Add 'general' preferences, defined in the XML file
         // TODO: Add preferences from XML
 
